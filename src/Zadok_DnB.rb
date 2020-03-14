@@ -1,9 +1,11 @@
 
 use_bpm 90
 
-
 use_transpose 12
 use_debug false
+
+# Run this in another buffer to reset the counter
+# set :i, 0
 
 # Key: F# and C#
 a = [
@@ -68,6 +70,11 @@ live_loop :main do
     i = 0
   end
   
+  # live controls
+  drums = true
+  mid   = true
+  bass  = true
+  
   item = a[i]
   i+=1
   set :i, i
@@ -81,26 +88,49 @@ live_loop :main do
   
   puts i, r
   
-  # TODO: use scues to make the always play the whole bar
+  # Drums
+  # TODO: use cues to make the always play the whole bar
   finish = 0.5*n/4
-  with_fx :slicer, phase: [0.125, 0.25, 0.5, 1, 2].choose, mix: 1 do
-    #sample :loop_amen_full, beat_stretch: 8, amp: 2, finish: finish
+  if drums
+    with_fx :slicer, phase: [0.125, 0.25, 0.5, 1, 2].choose, mix: 1 do
+      sample :loop_amen_full, beat_stretch: 8, amp: 2, finish: finish
+    end
   end
   
   t = n*0.5
-  use_synth :dpulse
-  #play r[0]-24, sustain: n, amp: 2, cutoff: 30
   
-  with_fx :slicer, phase: [0.25, 0.5, 1].choose, wave:0 do
-    play r[0]-12, sustain: n, release: 0, amp: 2, cutoff: rrand(40, 80)
+  bass_cutoff = [60, 110, 120].choose
+  bass_cutoff_final = 40
+  bass_cutof_inc = [5, 10, 20].choose
+  
+  if(bass_cutoff > 100)
+    bass_cutof_inc = -bass_cutof_inc
   end
   
-  with_fx :slicer, phase: [0.25, 0.5, 1].choose, wave:1 do
-    play r[1]-12, sustain: n, release: 0, amp: 2, cutoff: rrand(30, 70)
+  if bass
+    bass = 0
+    with_fx :reverb do
+      use_synth :beep
+      play r, amp: 2, release: t
+      
+      use_synth :prophet
+      bass = play r[0]-24, sustain: n, amp: 0.7, cutoff: bass_cutoff, slide: n
+      control bass, cutoff: bass_cutoff_final
+    end
+  end
+  
+  if mid
+    use_synth :dpulse
+    with_fx :slicer, phase: [0.25, 0.5, 1].choose, wave:0 do
+      play r[0]-12, sustain: n, release: 0, amp: 2, cutoff: rrand(40, 80)
+    end
+    
+    with_fx :slicer, phase: [0.25, 0.5, 1].choose, wave:1 do
+      play r[1]-12, sustain: n, release: 0, amp: 2, cutoff: rrand(30, 70)
+    end
   end
   
   n.times do
-    
     4.times do
       use_synth :pluck
       play r.tick+12, release: 0.3, amp: 0.7

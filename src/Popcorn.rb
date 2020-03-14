@@ -1,15 +1,20 @@
-use_bpm 300
-
+bpm = 300
+use_bpm bpm
+use_debug false
 puts :d4 - :g3
 
 intro = true
 scratch = false
 bass = false
-rand_cc = false
+drums = false
+rand_cc = true
+rand_cc_2 = false
+done = false
 
-cutoff = 30
+cutoff = 90
 cutoff_inc = 1
 offset = 0
+
 
 define :melody_player do |notes|
   count = notes.length
@@ -32,7 +37,15 @@ define :melody_player do |notes|
     if(rand_cc)
       cutoff = rrand(60, 100)
       n2 = n + [-12,0, 12, 24].choose
-      play n2, attack: 0.0, release: 0.5, cutoff: cutoff
+      
+      in_thread do
+        
+        play n2, attack: 0.0, release: 0.5, cutoff: cutoff
+        sleep 0.5
+        if rand_cc_2
+          play n2, attack: 0.0, release: 0.5, cutoff: cutoff + 10
+        end
+      end
     end
     
     rate = rrand(0.9, 1.1)
@@ -52,44 +65,8 @@ define :melody_player do |notes|
     sleep 1
     
     if(i == count)
-      if(rrand(0, 1) > 0.5)
-        sample :bd_haus, cutoff: 60, amp: 1.0
-      end
-      
       play_pattern_timed [n, n], [a2,a2], attack: 0.0, release: a2, cutoff: cutoff
     end
-  end
-end
-
-define :melody do |set_offset|
-  offset = set_offset
-  
-  part1 = [:g3,:f3,:g3,:d3,:bb2,:d3,:g2]
-  part2 = [:g3,:a3,:bb3,:a3,:bb3,:g3,:a3,:g3,:a3,:f3,:g3,:f3,:g3,:eb3,:g3]
-  
-  #sample :loop_amen, beat_stretch: 8*a
-  melody_player part1
-  
-  #sample :loop_amen, beat_stretch: 8*a
-  melody_player part2
-end
-
-define :set_state do |j|
-  if(j == 2)
-    bass = true
-    intro = false
-  elsif(j == 3)
-    scratch = true
-    intro = false
-  elsif(j == 4)
-    rand_cc = true
-  elsif(j == 5)
-    intro = true
-  elsif(j == 6)
-    rand_cc = false
-    cutoff_inc=-1
-  elsif(j == 7)
-    bass = false
   end
 end
 
@@ -100,25 +77,99 @@ a = 0.5
 t0 = [1,0.5,0.5,1,0.5,0.5,1,0.5,0.5,0.5,0.5,0.5,0.5]
 n = play :g3, sustain: 8000, amp: 0, note_slide: 0.1, amp_slide: 8
 
+introLevel = 0.1;
+
 live_loop :intro_loop do
-  control n, amp: intro ? 0.1 : 0
-  for i in 0..12
-    control n, note: part0[i]+offset, cutoff: cutoff
-    sleep t0[i]
+  sync "intro"
+  print "intro"
+  control n, amp: intro ? introLevel : 0
+  if done
+    introLevel -= 0.005 #Fade out
   end
-  #stop
+  12.times do
+    for i in 0..12
+      control n, note: part0[i]+offset, cutoff: cutoff
+      sleep t0[i]
+    end
+  end
 end
 
-sleep 32
-j = 0
-live_loop :melody_loop do
-  j+=1
+live_loop :drum_loop do
+  sync "drum_loop"
+  sample :loop_tabla, beat_stretch: 64, amp: 4.0, finish: 0.5
+  print "drums"
+end
+
+define :melody do |set_offset|
+  offset = set_offset
   
+  part1 = [:g3,:f3,:g3,:d3,:bb2,:d3,:g2]
+  part2 = [:g3,:a3,:bb3,:a3,:bb3,:g3,:a3,:g3,:a3,:f3,:g3,:f3,:g3,:eb3,:g3]
+  
+  cue "intro"
+  
+  if drums
+    cue "drum_loop"
+  end
+  print "part 1"
+  melody_player part1
+  
+  print "part 2"
+  melody_player part2
+  
+  print "Done"
+end
+
+define :set_state do |j|
+  if(j == 1)
+    bass = true
+  elsif(j == 2)
+    intro = false
+    drums = false
+  elsif(j == 3)
+    scratch = true
+    drums = true
+  elsif(j == 4)
+    drums = true
+    intro = false
+    rand_cc = true
+  elsif(j == 5)
+    drums = false
+    rand_cc_2 = true
+    bpm = 150
+  elsif(j == 6)
+    bpm = 300
+    intro = true
+    drums = true
+    cutoff_inc=-1
+  elsif(j == 7)
+    rand_cc = false
+    drums = false
+    bass = false
+  elsif(j == 8)
+    done = true
+  end
+end
+
+sleep 1
+cue "intro"
+sleep 32
+
+j = 0
+8.times do
+  j+=1
   set_state j
+  use_bpm bpm
+  
+  if done
+    stop
+  end
   
   with_fx :reverb, depth: 10, mix: 0.5 do
     melody 0
-    melody 5
-    melody 0
+    if bpm == 300
+      melody 5
+      melody 0
+    end
   end
 end
