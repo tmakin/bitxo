@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111111"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter" />
+
+        <uk.neatlines.stompbox.ZoneOverlayView
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/accelPanel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/accel_help"
+                android:textColor="#DDDDDD"
+                android:textSize="16sp" />
+
+            <ProgressBar
+                android:id="@+id/accelMeter"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginTop="24dp"
+                android:max="200" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/accel_meter_hint"
+                android:textColor="#888888"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|start"
+            android:background="#99000000"
+            android:fontFamily="monospace"
+            android:padding="6dp"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/flip"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:text="@string/flip_camera"
+            android:textColor="#FFFFFF" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <RadioGroup
+            android:id="@+id/mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/modeCamera"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/mode_camera"
+                android:textColor="#FFFFFF" />
+
+            <RadioButton
+                android:id="@+id/modeAccel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/mode_accel"
+                android:textColor="#FFFFFF" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notes_label"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp" />
+
+        <EditText
+            android:id="@+id/pattern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/notes_hint"
+            android:importantForAutofill="no"
+            android:inputType="textNoSuggestions|textCapCharacters"
+            android:maxLines="1"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666" />
+
+        <TextView
+            android:id="@+id/sensitivityLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp" />
+
+        <SeekBar
+            android:id="@+id/sensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <TextView
+            android:id="@+id/decayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp" />
+
+        <SeekBar
+            android:id="@+id/decay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/calibrate"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:text="@string/calibrate" />
+
+            <Button
+                android:id="@+id/testPad"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:text="@string/test_pad" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
