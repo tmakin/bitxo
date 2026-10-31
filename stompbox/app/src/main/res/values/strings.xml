@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stomp Box</string>
+    <string name="mode_camera">Camera</string>
+    <string name="mode_accel">Accelerometer</string>
+    <string name="flip_camera">Flip</string>
+    <string name="zone_label">Trigger zone</string>
+    <string name="notes_label">Notes. Each tap plays the next one, e.g. \"E2\" or \"E2 B1 A1 B1\"</string>
+    <string name="notes_hint">E2</string>
+    <string name="sensitivity_label">Sensitivity: %1$d%%</string>
+    <string name="decay_label">Note length: %1$.2f s</string>
+    <string name="calibrate">Calibrate\n(foot up)</string>
+    <string name="calibrate_accel">Reset</string>
+    <string name="test_pad">Test\nsound</string>
+    <string name="accel_help">Strap the phone to your ankle or foot, or lay it flat on a hard floor next to your foot. Then tap.</string>
+    <string name="accel_meter_hint">Signal level. A tap triggers when the bar passes halfway.</string>
+    <string name="camera_denied">No camera permission. Switched to accelerometer.</string>
+    <string name="no_accel">This device has no accelerometer</string>
+    <string name="bad_pattern">Unrecognised note. Use names like E2, F#1, Bb1, or MIDI numbers.</string>
+    <string name="audio_failed">Could not open the low-latency audio stream</string>
+</resources>
